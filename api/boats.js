@@ -140,11 +140,13 @@ async function get_boat_loads(boat_id) {
         const boat = await get_boat(boat_id);
         if (boat && boat.loads.length > 0) {
             let loads = [];
-            boat.loads.forEach(async (load) => {
-                loads.push(await Loads.get_load(load.id));
-                
-            });
+            for (let load of boat.loads) {
+                const l = await Loads.get_load(load.id);
+                loads.push(l);
+            }
+
             return loads;
+            
         } else {
             return false;
         }
@@ -254,6 +256,7 @@ router.delete('/:boat_id/loads/:load_id', async (req, res) => {
 router.get('/:boat_id/loads', async (req, res) => {
     try {
         const loads = await get_boat_loads(req.params.boat_id);
+        console.log(loads);
         if (loads) {
             res.status(OK).json({"loads": loads});
         } else {
